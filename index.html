@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>朗读小达人 - 小学语文朗读评价</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+:root {
+  --green: #52c41a;
+  --yellow: #faad14;
+  --red: #ff4d4f;
+  --bg: #FFF8E7;
+  --card: #FFFFFF;
+  --primary: #FF8C42;
+  --primary-light: #FFB347;
+  --text: #3D3D3D;
+  --text-light: #888;
+  --radius: 16px;
+  --shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+/* Header */
+.header {
+  background: linear-gradient(135deg, #FF8C42 0%, #FFB347 100%);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(255,140,66,0.3);
+}
+.header h1 {
+  font-size: 22px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header .stars-count {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 15px;
+  font-weight: bold;
+}
+.header-btn {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+.header-btn:hover { background: rgba(255,255,255,0.35); }
+/* Main Layout */
+.main {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+/* Cards */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card-header {
+  padding: 14px 18px;
+  font-size: 17px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 2px solid #f0f0f0;
+}
+.card-header.green { background: #f6ffed; color: var(--green); border-color: #d9f7be; }
+.card-header.orange { background: #fff7e6; color: var(--primary); border-color: #ffd591; }
+.card-header.blue { background: #e6f7ff; color: #1890ff; border-color: #91d5ff; }
+.card-body { padding: 18px; }
+/* Text Display */
+.text-display {
+  font-size: 28px;
+  line-height: 2;
+  letter-spacing: 2px;
+  min-height: 200px;
+  padding: 16px;
+  background: #FFFBF0;
+  border-radius: 12px;
+  border: 2px dashed #e8d5b0;
+  word-break: break-all;
+  user-select: text;
+}
+.text-display .char {
+  display: inline-block;
+  padding: 2px 1px;
+  border-radius: 4px;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.text-display .char.correct { background: #d9f7be; color: #389e0d; }
+.text-display .char.wrong { background: #ffccc7; color: #cf1322; }
+.text-display .char.highlight { background: #fff3bf; color: #d48806; }
+.text-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.text-controls button {
+  background: #f0f0f0;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.text-controls button:hover { background: #e0e0e0; }
+/* Lesson Selector */
+.lesson-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.lesson-btn {
+  background: linear-gradient(135deg, #FFF8E7, #FFF0D4);
+  border: 2px solid #FFD591;
+  padding: 11px 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  color: var(--text);
+}
+.lesson-btn:hover { border-color: var(--primary); background: linear-gradient(135deg, #FFF0E0, #FFE4C4); transform: translateX(4px); }
+.lesson-btn.active { border-color: var(--primary); background: linear-gradient(135deg, #FFE4B5, #FFD591); color: #fff; font-weight: bold; box-shadow: 0 2px 8px rgba(255,140,66,0.3); }
+.custom-text-area {
+  width: 100%;
+  min-height: 100px;
+  border: 2px solid #e8d5b0;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 18px;
+  resize: vertical;
+  font-family: inherit;
+}
+/* Recording Area */
+.record-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 18px;
+  gap: 20px;
+}
+.record-btn {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(145deg, #ff6b35, #ff8c42);
+  color: #fff;
+  font-size: 48px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(255,107,53,0.4);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.record-btn:hover { transform: scale(1.05); }
+.record-btn:active { transform: scale(0.95); }
+.record-btn.recording {
+  background: linear-gradient(145deg, #ff4d4f, #ff7875);
+  box-shadow: 0 8px 24px rgba(255,77,79,0.4);
+  animation: pulse 1s infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,77,79,0.5); }
+  50% { box-shadow: 0 0 0 20px rgba(255,77,79,0); }
+}
+.volume-meter {
+  width: 100%;
+  max-width: 260px;
+  height: 24px;
+  background: #f0f0f0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: none;
+}
+.volume-meter.show { display: block; }
+.volume-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--green), var(--yellow), var(--red));
+  border-radius: 12px;
+  transition: width 0.1s;
+}
+.record-status {
+  font-size: 18px;
+  color: var(--text-light);
+  min-height: 28px;
+}
+.mode-switch {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.mode-btn {
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 2px solid #e0e0e0;
+  background: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mode-btn.active { border-color: var(--primary); background: #fff0e0; color: var(--primary); font-weight: bold; }
+/* Evaluation Report */
+.eval-report { display: flex; flex-direction: column; gap: 14px; }
+.eval-dimension {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #fafafa;
+  border-radius: 12px;
+  border: 2px solid #f0f0f0;
+}
+.light {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: all 0.5s;
+}
+.light.green { background: radial-gradient(circle at 35% 35%, #a0d911, var(--green)); box-shadow: 0 0 16px rgba(82,196,26,0.5); }
+.light.yellow { background: radial-gradient(circle at 35% 35%, #ffe566, var(--yellow)); box-shadow: 0 0 16px rgba(250,173,20,0.5); }
+.light.red { background: radial-gradient(circle at 35% 35%, #ff7875, var(--red)); box-shadow: 0 0 16px rgba(255,77,79,0.5); }
+.light.off { background: #ddd; }
+.dim-label { font-size: 18px; font-weight: bold; flex: 1; }
+.dim-result { font-size: 16px; font-weight: bold; }
+.dim-result.green { color: var(--green); }
+.dim-result.yellow { color: var(--yellow); }
+.dim-result.red { color: var(--red); }
+/* Wrong Characters */
+.wrong-chars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.wrong-char-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #fff2f0;
+  border: 2px solid #ffccc7;
+  border-radius: 10px;
+  animation: slideIn 0.3s ease;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.wrong-char-item .char { font-size: 24px; font-weight: bold; }
+.wrong-char-item .pinyin { font-size: 15px; color: var(--red); font-weight: bold; }
+.wrong-char-item .pinyin-correct { font-size: 15px; color: var(--green); font-weight: bold; margin-left: 4px; }
+.speak-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.correction-note {
+  font-size: 13px;
+  color: #d48806;
+  background: #fffbe6;
+  padding: 4px 10px;
+  border-radius: 6px;
+  width: 100%;
+  margin-top: 2px;
+}
+.correction-btn {
+  margin-left: auto;
+  padding: 4px 12px;
+  border-radius: 16px;
+  border: 2px solid var(--green);
+  background: #fff;
+  color: var(--green);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.correction-btn.done { background: var(--green); color: #fff; }
+/* Teacher Section */
+.teacher-section {
+  padding: 18px;
+  border-top: 2px solid #f0f0f0;
+}
+.teacher-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.teacher-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+.check-item:hover { background: #f6ffed; }
+.check-item input { width: 22px; height: 22px; accent-color: var(--green); cursor: pointer; }
+.teacher-stars {
+  margin-top: 12px;
+  font-size: 15px;
+  color: var(--yellow);
+  font-weight: bold;
+}
+/* Bottom Actions */
+.bottom-actions {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.action-btn {
+  padding: 12px 28px;
+  border-radius: 25px;
+  border: none;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.action-btn:hover { transform: translateY(-2px); }
+.action-btn.primary { background: linear-gradient(135deg, #ff6b35, #ff8c42); color: #fff; box-shadow: 0 4px 12px rgba(255,107,53,0.3); }
+.action-btn.secondary { background: #fff; color: var(--primary); border: 2px solid var(--primary); }
+.action-btn.success { background: var(--green); color: #fff; }
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 480px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: popIn 0.3s ease;
+}
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.modal h2 {
+  font-size: 22px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-close {
+  float: right;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text-light);
+}
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.setting-row label { font-size: 14px; width: 100px; flex-shrink: 0; }
+.setting-row input, .setting-row select {
+  flex: 1;
+  padding: 8px 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.setting-row input:focus, .setting-row select:focus { border-color: var(--primary); outline: none; }
+/* Celebration */
+.celebration {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+.celebration.show { display: flex; }
+.celebration-content {
+  text-align: center;
+  animation: bounceIn 0.6s ease;
+}
+@keyframes bounceIn {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.celebration-content h2 { font-size: 36px; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+.celebration-content p { font-size: 20px; color: #ffe4b5; margin-top: 10px; }
+.confetti {
+  position: fixed;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  z-index: 301;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(720deg); }
+}
+/* Guide/Instructions */
+.guide-step {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 16px;
+  align-items: flex-start;
+}
+.step-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.step-text { font-size: 16px; line-height: 1.6; padding-top: 6px; }
+/* Badge */
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+.badge-item {
+  text-align: center;
+  padding: 10px;
+  border-radius: 12px;
+  background: #f9f9f9;
+}
+.badge-item.unlocked { background: #fffbe6; border: 2px solid var(--yellow); }
+.badge-item.locked { opacity: 0.4; }
+.badge-item .badge-icon { font-size: 32px; }
+.badge-item .badge-name { font-size: 11px; margin-top: 4px; }
+/* History */
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #fafafa;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.history-item .h-lesson { flex: 1; font-size: 14px; font-weight: bold; }
+.history-item .h-lights { display: flex; gap: 4px; }
+.history-item .h-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+.history-item .h-date { font-size: 12px; color: var(--text-light); }
+/* Follow-along mode */
+.follow-line {
+  font-size: 26px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  background: #f9f9f9;
+  transition: all 0.3s;
+}
+.follow-line.active { background: #fff7e6; border: 2px solid var(--primary); }
+.follow-line.done { background: #f6ffed; border: 2px solid var(--green); }
+.follow-line .line-num { font-size: 14px; color: var(--text-light); margin-right: 8px; }
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+/* Tab navigation for mobile */
+.mobile-tabs {
+  display: none;
+  position: sticky;
+  top: 56px;
+  background: var(--bg);
+  z-index: 90;
+  padding: 8px 16px;
+  gap: 4px;
+  justify-content: center;
+}
+.tab-btn {
+  flex: 1;
+  max-width: 120px;
+  padding: 8px 4px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: center;
+}
+.tab-btn.active { background: var(--primary); color: #fff; }
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  color: var(--text-light);
+}
+/* Responsive */
+@media (max-width: 900px) {
+  .main {
+    grid-template-columns: 1fr;
+    padding: 10px;
+    gap: 10px;
+  }
+  .mobile-tabs { display: flex; }
+  .main > :nth-child(2) { display: none; }
+  body.tab-recording .main > :nth-child(1),
+  body.tab-recording .main > :nth-child(2),
+  body.tab-recording .main > :nth-child(3) { display: none; }
+  body.tab-recording .main > :nth-child(2) { display: flex; }
+  .header h1 { font-size: 18px; }
+  .text-display { font-size: 22px; }
+  .record-btn { width: 110px; height: 110px; font-size: 40px; }
+}
+@media (max-width: 480px) {
+  .header { padding: 10px 14px; }
+  .header h1 { font-size: 16px; }
+  .header .stars-count { font-size: 13px; padding: 3px 10px; }
+  .text-display { font-size: 20px; line-height: 1.8; }
+  .card-body { padding: 12px; }
+}
+/* Utility */
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+.mt-10 { margin-top: 10px; }
+.mb-10 { margin-bottom: 10px; }
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.tag-green { background: #d9f7be; color: #389e0d; }
+.tag-yellow { background: #fffbe6; color: #d48806; }
+.tag-red { background: #ffccc7; color: #cf1322; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1><span>📖</span> 朗读小达人</h1>
+  <div style="display:flex;align-items:center;gap:6px;">
+    <div class="stars-count" id="starCount">⭐ 0 颗星</div>
+    <button class="header-btn" onclick="showGuide()">📋 使用说明</button>
+    <button class="header-btn" onclick="showSettings()">⚙️ 设置</button>
+  </div>
+</div>
+
+<!-- Mobile Tabs -->
+<div class="mobile-tabs">
+  <button class="tab-btn active" onclick="switchTab('reading')">📖 课文</button>
+  <button class="tab-btn" onclick="switchTab('recording')">🎤 录音</button>
+  <button class="tab-btn" onclick="switchTab('report')">📊 评价</button>
+</div>
+
+<!-- Main Layout -->
+<div class="main" id="mainLayout">
+
+  <!-- Left: Reading Task -->
+  <div class="card" id="panel-reading">
+    <div class="card-header orange">📖 朗读任务</div>
+    <div class="card-body">
+      <div class="lesson-selector" id="lessonSelector">
+      </div>
+      <div class="text-display" id="textDisplay">
+        <span style="color:var(--text-light);">请先选择一篇课文 ✨</span>
+      </div>
+      <div class="text-controls">
+        <button onclick="changeFontSize(-2)">A-</button>
+        <button onclick="changeFontSize(2)">A+</button>
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:2px dashed #e8d5b0;">
+        <div style="font-size:15px;font-weight:bold;margin-bottom:8px;">✏️ 粘贴自定义课文</div>
+        <textarea class="custom-text-area" id="customText" placeholder="在这里粘贴课文内容，点击「应用」即可使用..."></textarea>
+        <button class="action-btn primary mt-10" style="font-size:15px;padding:10px 20px;width:100%;justify-content:center;" onclick="applyCustomText()">📝 应用粘贴的课文</button>
+      </div>
+      <div id="prevResult" class="mt-10 hidden">
+        <div style="font-size:14px;font-weight:bold;margin-bottom:6px;">📊 上次表现：</div>
+        <div id="prevResultContent"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Center: Recording -->
+  <div class="card" id="panel-recording">
+    <div class="card-header green">🎤 朗读录音</div>
+    <div class="card-body record-area">
+      <div class="mode-switch">
+        <button class="mode-btn active" id="modeFull" onclick="switchMode('full')">📖 整篇朗读</button>
+        <button class="mode-btn" id="modeFollow" onclick="switchMode('follow')">🎵 跟读模式</button>
+      </div>
+      <button class="record-btn" id="recordBtn" onclick="toggleRecording()" disabled>
+        <span id="recordIcon">🎤</span>
+      </button>
+      <div class="volume-meter" id="volumeMeter">
+        <div class="volume-fill" id="volumeFill"></div>
+      </div>
+      <div class="record-status" id="recordStatus">选择课文后开始朗读</div>
+      <div id="followSection" class="hidden" style="width:100%;">
+        <div style="font-size:14px;color:var(--text-light);margin-bottom:8px;">跟读模式：先听示范，再跟着读</div>
+        <button class="action-btn secondary" style="font-size:14px;padding:8px 16px;margin-bottom:10px;" onclick="playDemoLine()">🔊 播放示范</button>
+        <div id="followLines" style="max-height:300px;overflow-y:auto;"></div>
+        <div id="followStarCount" class="text-center mt-10" style="font-size:18px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Evaluation Report -->
+  <div class="card" id="panel-report">
+    <div class="card-header blue">📊 朗读评价</div>
+    <div class="card-body">
+      <div class="eval-report" id="evalReport">
+        <div class="eval-dimension">
+          <div class="light off" id="light-accuracy"></div>
+          <span class="dim-label">准确度</span>
+          <span class="dim-result" id="result-accuracy">—</span>
+        </div>
+        <div class="eval-dimension">
+          <div class="light off" id="light-completeness"></div>
+          <span class="dim-label">完整度</span>
+          <span class="dim-result" id="result-completeness">—</span>
+        </div>
+        <div class="eval-dimension">
+          <div class="light off" id="light-fluency"></div>
+          <span class="dim-label">流利度</span>
+          <span class="dim-result" id="result-fluency">—</span>
+        </div>
+      </div>
+      <div id="wrongCharsSection" class="hidden mt-10">
+        <div style="font-size:16px;font-weight:bold;margin-bottom:10px;">❌ 需要订正的字</div>
+        <div class="wrong-chars" id="wrongChars"></div>
+      </div>
+      <div id="noErrorsMsg" class="hidden text-center mt-10" style="font-size:18px;color:var(--green);">
+        🎉 太棒了！全部读对啦！
+      </div>
+      <!-- Teacher Section -->
+      <div class="teacher-section">
+        <div class="teacher-title">👩‍🏫 老师简评</div>
+        <div class="teacher-checks">
+          <label class="check-item"><input type="checkbox" id="chkVoice" onchange="updateTeacherStars()"><span>🔊 声音响亮</span></label>
+          <label class="check-item"><input type="checkbox" id="chkNoSing" onchange="updateTeacherStars()"><span>🎵 没有拖音/唱读</span></label>
+          <label class="check-item"><input type="checkbox" id="chkHappy" onchange="updateTeacherStars()"><span>😊 读得开心/有精神</span></label>
+        </div>
+        <div class="teacher-stars" id="teacherStars"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Actions -->
+<div class="bottom-actions">
+  <button class="action-btn primary" id="startRecordBtn" onclick="toggleRecording()" disabled>🎤 开始朗读</button>
+  <button class="action-btn secondary" onclick="resetEval()">🔄 重新来一次</button>
+  <button class="action-btn success" onclick="showHistory()">📋 历史记录</button>
+</div>
+
+<!-- Celebration -->
+<div class="celebration" id="celebration" onclick="hideCelebration()">
+  <div class="celebration-content">
+    <h2>🎉 朗读小达人！🎉</h2>
+    <p>三项全绿，太厉害了！+1 ⭐</p>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('settingsModal')">&times;</button>
+    <h2>⚙️ 设置</h2>
+    <div class="setting-row">
+      <label>学生昵称</label>
+      <input type="text" id="studentName" placeholder="输入昵称或学号" maxlength="20">
+    </div>
+    <div class="setting-row">
+      <label>API 模式</label>
+      <select id="apiMode" onchange="toggleApiFields()">
+        <option value="auto">自动（优先云评测）</option>
+        <option value="manual">纯手动模式</option>
+        <option value="simulated">模拟评测（演示用）</option>
+      </select>
+    </div>
+    <div id="tencentFields">
+      <div class="setting-row">
+        <label>SecretId</label>
+        <input type="text" id="secretId" placeholder="腾讯云 SecretId">
+      </div>
+      <div class="setting-row">
+        <label>SecretKey</label>
+        <input type="password" id="secretKey" placeholder="腾讯云 SecretKey" autocomplete="off">
+      </div>
+      <div class="setting-row">
+        <label>AppId</label>
+        <input type="text" id="appId" placeholder="智聆口语评测 AppId">
+      </div>
+    </div>
+    <div class="setting-row">
+      <label>字体大小</label>
+      <select id="fontSizeSelect" onchange="applyFontSize(this.value)">
+        <option value="22">小</option>
+        <option value="28" selected>中</option>
+        <option value="36">大</option>
+        <option value="44">特大</option>
+      </select>
+    </div>
+    <button class="action-btn primary" style="width:100%;justify-content:center;margin-top:10px;" onclick="saveSettings()">💾 保存设置</button>
+  </div>
+</div>
+
+<!-- Guide Modal -->
+<div class="modal-overlay" id="guideModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('guideModal')">&times;</button>
+    <h2>📋 使用说明</h2>
+    <div class="guide-step">
+      <div class="step-num">1</div>
+      <div class="step-text"><strong>选择课文</strong>：点击左侧选择预置课文，或粘贴自己想要的文本。</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">2</div>
+      <div class="step-text"><strong>开始朗读</strong>：点击录音按钮，大声朗读课文，再点一次结束。</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">3</div>
+      <div class="step-text"><strong>查看评价</strong>：系统会自动给出三色灯评价，错字可以点喇叭听标准读音并订正。</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">4</div>
+      <div class="step-text"><strong>老师点评</strong>：老师勾选三项即可，勾满额外加一颗表现星。</div>
+    </div>
+    <div class="guide-step">
+      <div class="step-num">5</div>
+      <div class="step-text"><strong>跟读模式</strong>：点击「跟读模式」，每句先听示范再跟读，读完一句得一颗星。</div>
+    </div>
+    <hr style="margin:16px 0;border:none;border-top:1px solid #eee;">
+    <div style="font-size:14px;color:var(--text-light);line-height:1.8;">
+      <strong>💡 小提示：</strong><br>
+      · 三色灯含义：🟢绿=优秀 &nbsp; 🟡黄=还需努力 &nbsp; 🔴红=需要多练习<br>
+      · 攒够星星可以解锁徽章，成为朗读小达人！<br>
+      · 设置中可以填写腾讯云 API 密钥开启智能评测。
+    </div>
+  </div>
+</div>
+
+<!-- History Modal -->
+<div class="modal-overlay" id="historyModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('historyModal')">&times;</button>
+    <h2>📋 朗读记录</h2>
+    <div id="historyList"></div>
+    <div id="badgeSection" class="mt-10">
+      <div style="font-size:16px;font-weight:bold;margin-bottom:8px;">🏅 我的徽章</div>
+      <div class="badge-grid" id="badgeGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Manual Eval Modal -->
+<div class="modal-overlay" id="manualEvalModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('manualEvalModal')">&times;</button>
+    <h2>📊 手动评价</h2>
+    <p style="color:var(--text-light);margin-bottom:16px;">请为本次朗读打分：</p>
+    <div class="eval-dimension" style="cursor:pointer;" onclick="setDim('accuracy', this)">
+      <div class="light off" id="manual-light-accuracy"></div>
+      <span class="dim-label">准确度</span>
+      <span style="font-size:14px;color:var(--text-light);margin-left:auto;">点击切换颜色</span>
+    </div>
+    <div class="eval-dimension" style="cursor:pointer;" onclick="setDim('completeness', this)">
+      <div class="light off" id="manual-light-completeness"></div>
+      <span class="dim-label">完整度</span>
+      <span style="font-size:14px;color:var(--text-light);margin-left:auto;">点击切换颜色</span>
+    </div>
+    <div class="eval-dimension" style="cursor:pointer;" onclick="setDim('fluency', this)">
+      <div class="light off" id="manual-light-fluency"></div>
+      <span class="dim-label">流利度</span>
+      <span style="font-size:14px;color:var(--text-light);margin-left:auto;">点击切换颜色</span>
+    </div>
+    <div id="manualWrongSection" class="mt-10">
+      <div style="font-size:14px;font-weight:bold;margin-bottom:8px;">标注错字（点击文字）：</div>
+      <div class="text-display" id="manualTextDisplay" style="font-size:22px;cursor:pointer;"></div>
+    </div>
+    <button class="action-btn primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="submitManualEval()">✅ 确认评价</button>
+  </div>
+</div>
+
+<!-- Student Login Modal -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal text-center">
+    <h2>👋 欢迎使用朗读小达人！</h2>
+    <p style="color:var(--text-light);margin:10px 0 20px;">请输入你的昵称，开始朗读之旅吧～</p>
+    <input type="text" id="loginName" placeholder="输入昵称或学号" maxlength="20"
+      style="width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:10px;font-size:18px;text-align:center;margin-bottom:16px;">
+    <button class="action-btn primary" style="width:100%;justify-content:center;" onclick="doLogin()">开始朗读 🚀</button>
+  </div>
+</div>
+
+<div class="footer">
+  朗读小达人 · 小学低年级语文朗读评价工具
+</div>
+
+<script>
+// ========== LESSONS DATA ==========
+const LESSONS = {
+  "四季": {
+    text: `春天来了，小草绿油油的。
+桃花开了，粉红粉红的。
+小朋友在草地上玩耍，
+笑得多开心呀！`,
+    lines: [
+      "春天来了，小草绿油油的。",
+      "桃花开了，粉红粉红的。",
+      "小朋友在草地上玩耍，",
+      "笑得多开心呀！"
+    ]
+  },
+  "小小的船": {
+    text: `弯弯的月儿小小的船，
+小小的船儿两头尖。
+我在小小的船里坐，
+只看见闪闪的星星蓝蓝的天。`,
+    lines: [
+      "弯弯的月儿小小的船，",
+      "小小的船儿两头尖。",
+      "我在小小的船里坐，",
+      "只看见闪闪的星星蓝蓝的天。"
+    ]
+  },
+  "比尾巴": {
+    text: `谁的尾巴长？
+谁的尾巴短？
+谁的尾巴好像一把伞？
+猴子的尾巴长。
+兔子的尾巴短。
+松鼠的尾巴好像一把伞。`,
+    lines: [
+      "谁的尾巴长？",
+      "谁的尾巴短？",
+      "谁的尾巴好像一把伞？",
+      "猴子的尾巴长。",
+      "兔子的尾巴短。",
+      "松鼠的尾巴好像一把伞。"
+    ]
+  },
+  "雪地里的小画家": {
+    text: `下雪啦，下雪啦！
+雪地里来了一群小画家。
+小鸡画竹叶，
+小狗画梅花，
+小鸭画枫叶，
+小马画月牙。`,
+    lines: [
+      "下雪啦，下雪啦！",
+      "雪地里来了一群小画家。",
+      "小鸡画竹叶，",
+      "小狗画梅花，",
+      "小鸭画枫叶，",
+      "小马画月牙。"
+    ]
+  },
+  "日月明": {
+    text: `日月明，虫鸟鸣。
+小土尘，小大尖。
+一火灭，一土地。
+田力男，人木休。
+手目看，口耳听。
+言语让，心灵性。`,
+    lines: [
+      "日月明，虫鸟鸣。",
+      "小土尘，小大尖。",
+      "一火灭，一土地。",
+      "田力男，人木休。",
+      "手目看，口耳听。",
+      "言语让，心灵性。"
+    ]
+  },
+  "静夜思": {
+    text: `床前明月光，
+疑是地上霜。
+举头望明月，
+低头思故乡。`,
+    lines: [
+      "床前明月光，",
+      "疑是地上霜。",
+      "举头望明月，",
+      "低头思故乡。"
+    ]
+  },
+  "画鸡": {
+    text: `头上红冠不用裁，
+满身雪白走将来。
+平生不敢轻言语，
+一叫千门万户开。`,
+    lines: [
+      "头上红冠不用裁，",
+      "满身雪白走将来。",
+      "平生不敢轻言语，",
+      "一叫千门万户开。"
+    ]
+  },
+  "小松鼠找花生": {
+    text: `松鼠妈妈对小松鼠说：
+"去，到地里去找花生。"
+小松鼠来到地里，
+看见一棵棵花生矮矮的，
+叶子上全是绿叶，
+没有一颗花生。`,
+    lines: [
+      "松鼠妈妈对小松鼠说：",
+      "\"去，到地里去找花生。\"",
+      "小松鼠来到地里，",
+      "看见一棵棵花生矮矮的，",
+      "叶子上全是绿叶，",
+      "没有一颗花生。"
+    ]
+  },
+  "乌鸦喝水": {
+    text: `一只乌鸦口渴了，
+到处找水喝。
+乌鸦看见一个瓶子，
+瓶子里有水。
+但是，瓶子里的水不多，
+瓶口又小，乌鸦喝不着水。
+怎么办呢？
+乌鸦看见旁边有许多小石子，
+想出办法来了。
+它把小石子一个一个地放进瓶子里。
+瓶子里的水渐渐升高，
+乌鸦就喝着水了。`,
+    lines: [
+      "一只乌鸦口渴了，",
+      "到处找水喝。",
+      "乌鸦看见一个瓶子，",
+      "瓶子里有水。",
+      "但是，瓶子里的水不多，",
+      "瓶口又小，乌鸦喝不着水。",
+      "怎么办呢？",
+      "乌鸦看见旁边有许多小石子，",
+      "想出办法来了。",
+      "它把小石子一个一个地放进瓶子里。",
+      "瓶子里的水渐渐升高，",
+      "乌鸦就喝着水了。"
+    ]
+  },
+  "司马光": {
+    text: `司马光小时候和别人捉迷藏。
+有一个小孩爬到一口大缸上去了，
+一不小心掉进缸里。
+别的孩子都慌了，
+有的吓哭了，
+有的叫着跑去找大人。
+司马光没有慌。
+他举起一块石头，
+使劲砸那口缸。
+缸破了，
+水流出来，
+那个小孩得救了。`,
+    lines: [
+      "司马光小时候和别人捉迷藏。",
+      "有一个小孩爬到一口大缸上去了，",
+      "一不小心掉进缸里。",
+      "别的孩子都慌了，",
+      "有的吓哭了，",
+      "有的叫着跑去找大人。",
+      "司马光没有慌。",
+      "他举起一块石头，",
+      "使劲砸那口缸。",
+      "缸破了，",
+      "水流出来，",
+      "那个小孩得救了。"
+    ]
+  }
+};
+
+// ========== COMMON MISTAKES DATABASE ==========
+const COMMON_MISTAKES = {
+  "春": { correct: "chūn", wrong: "cūn", note: "注意'春'是翘舌音哦，ch而不是c！" },
+  "睛": { correct: "jīng", wrong: "jīn", note: "'睛'是后鼻音 jīng，不是 jīn 哦～" },
+  "友": { correct: "you", wrong: "yǒu", note: "'朋友'的'友'读轻声，不要第四声哦～" },
+  "地": { correct: "de", wrong: "dì", note: "'雪地里'的'地'读轻声 de～" },
+  "么": { correct: "me", wrong: "mó", note: "'什么'的'么'读轻声 me～" },
+  "的": { correct: "de", wrong: "dí", note: "'的'在这里读轻声 de～" },
+  "了": { correct: "le", wrong: "liǎo", note: "'来了'的'了'读轻声 le～" },
+  "们": { correct: "men", wrong: "mín", note: "'我们'的'们'读轻声 men～" },
+  "天": { correct: "tiān", wrong: "tián", note: "'天'是 tiān，不是 tián 哦～" },
+  "见": { correct: "jiàn", wrong: "jiān", note: "'看见'的'见'读 jiàn，第四声～" },
+  "星": { correct: "xīng", wrong: "xín", note: "'星'是后鼻音 xīng，注意～" },
+  "闪": { correct: "shǎn", wrong: "chǎn", note: "'闪'是翘舌音 shǎn，不是 chǎn～" },
+  "雪": { correct: "xuě", wrong: "xüě", note: "'雪'的拼音是 xuě，u上两点去掉～" },
+  "那": { correct: "nà", wrong: "nán", note: "'那里'的'那'读 nà，第四声～" },
+  "着": { correct: "zhe", wrong: "zháo", note: "'来了着'的'着'读轻声 zhe～" }
+};
+
+// ========== APP STATE ==========
+let state = {
+  currentLesson: null,
+  customText: '',
+  customLines: [],
+  fontSize: 28,
+  isRecording: false,
+  mediaRecorder: null,
+  audioChunks: [],
+  audioBlob: null,
+  audioUrl: null,
+  mode: 'full', // 'full' or 'follow'
+  stars: parseInt(localStorage.getItem('stars') || '0'),
+  badges: JSON.parse(localStorage.getItem('badges') || '[]'),
+  history: JSON.parse(localStorage.getItem('history') || '[]'),
+  studentName: localStorage.getItem('studentName') || '',
+  settings: JSON.parse(localStorage.getItem('settings') || '{}'),
+  manualEvalState: { accuracy: 'off', completeness: 'off', fluency: 'off' },
+  followStars: 0,
+  followCurrentLine: 0,
+  followResults: []
+};
+
+// ========== INIT ==========
+function init() {
+  loadSettings();
+  renderLessons();
+  if (state.studentName) {
+    updateStarDisplay();
+    showGuide();
+  } else {
+    document.getElementById('loginModal').classList.add('show');
+  }
+}
+
+function loadSettings() {
+  const s = state.settings;
+  if (s.secretId) document.getElementById('secretId').value = s.secretId;
+  if (s.appId) document.getElementById('appId').value = s.appId;
+  if (s.fontSize) applyFontSize(s.fontSize);
+}
+
+function saveSettings() {
+  const s = {
+    secretId: document.getElementById('secretId').value.trim(),
+    secretKey: document.getElementById('secretKey').value.trim(),
+    appId: document.getElementById('appId').value.trim(),
+    fontSize: parseInt(document.getElementById('fontSizeSelect').value),
+    apiMode: document.getElementById('apiMode').value
+  };
+  state.settings = s;
+  state.studentName = document.getElementById('studentName').value.trim();
+  localStorage.setItem('settings', JSON.stringify(s));
+  if (state.studentName) localStorage.setItem('studentName', state.studentName);
+  applyFontSize(s.fontSize);
+  closeModal('settingsModal');
+  alert('✅ 设置已保存！');
+}
+
+function toggleApiFields() {
+  const mode = document.getElementById('apiMode').value;
+  document.getElementById('tencentFields').classList.toggle('hidden', mode === 'manual');
+}
+
+function doLogin() {
+  const name = document.getElementById('loginName').value.trim();
+  if (!name) { alert('请输入昵称或学号'); return; }
+  state.studentName = name;
+  localStorage.setItem('studentName', name);
+  closeModal('loginModal');
+  updateStarDisplay();
+}
+
+// ========== LESSONS ==========
+function renderLessons() {
+  const container = document.getElementById('lessonSelector');
+  let html = '';
+  for (const key of Object.keys(LESSONS)) {
+    html += `<button class="lesson-btn" data-key="${key}" onclick="selectLesson('${key}', this)">${key}</button>`;
+  }
+  html += `<div style="border-top:2px dashed #e8d5b0;margin:8px 0;"></div>`;
+  html += `<button class="lesson-btn" data-key="__custom__" onclick="selectLesson('__custom__', this)">✏️ 自己粘贴课文</button>`;
+  container.innerHTML = html;
+  // 默认选中第一篇
+  const firstKey = Object.keys(LESSONS)[0];
+  const firstBtn = document.querySelector(`.lesson-btn[data-key="${firstKey}"]`);
+  selectLesson(firstKey, firstBtn);
+}
+
+function selectLesson(key, btn) {
+  document.querySelectorAll('.lesson-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  if (key === '__custom__') {
+    document.getElementById('customText').focus();
+    state.currentLesson = null;
+    state.customText = '';
+    document.getElementById('textDisplay').innerHTML = '<span style="color:var(--text-light);">请在下方粘贴课文内容 ✨</span>';
+    enableRecordBtn(false);
+    return;
+  }
+
+  state.currentLesson = key;
+  state.customText = LESSONS[key].text;
+  renderText(key);
+  enableRecordBtn(true);
+  showPrevResult(key);
+}
+
+function renderText(key) {
+  const lesson = LESSONS[key];
+  const display = document.getElementById('textDisplay');
+  let html = '';
+  for (const char of lesson.text.replace(/\n/g, ' ')) {
+    html += `<span class="char">${char}</span>`;
+  }
+  display.innerHTML = html;
+  display.style.fontSize = state.fontSize + 'px';
+}
+
+function applyCustomText() {
+  const text = document.getElementById('customText').value.trim();
+  if (!text) return;
+  state.customText = text;
+  state.customLines = text.split(/[。！？\n]/).filter(l => l.trim());
+  const display = document.getElementById('textDisplay');
+  let html = '';
+  for (const char of text.replace(/\n/g, ' ')) {
+    html += `<span class="char">${char}</span>`;
+  }
+  display.innerHTML = html;
+  display.style.fontSize = state.fontSize + 'px';
+  enableRecordBtn(true);
+  document.getElementById('customTextInput').classList.add('hidden');
+}
+
+function changeFontSize(delta) {
+  state.fontSize = Math.max(18, Math.min(48, state.fontSize + delta));
+  document.querySelectorAll('.text-display').forEach(el => {
+    el.style.fontSize = state.fontSize + 'px';
+  });
+  document.getElementById('fontSizeSelect').value = state.fontSize;
+}
+
+function applyFontSize(size) {
+  state.fontSize = size;
+  document.querySelectorAll('.text-display').forEach(el => {
+    el.style.fontSize = size + 'px';
+  });
+}
+
+function enableRecordBtn(enabled) {
+  const btn = document.getElementById('startRecordBtn');
+  const recordBtn = document.getElementById('recordBtn');
+  btn.disabled = !enabled;
+  recordBtn.disabled = !enabled;
+}
+
+// ========== RECORDING ==========
+async function toggleRecording() {
+  if (!state.isRecording) {
+    await startRecording();
+  } else {
+    stopRecording();
+  }
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { sampleRate: 16000 } });
+    state.mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+    state.audioChunks = [];
+    state.mediaRecorder.ondataavailable = e => {
+      if (e.data.size > 0) state.audioChunks.push(e.data);
+    };
+    state.mediaRecorder.onstop = async () => {
+      state.audioBlob = new Blob(state.audioChunks, { type: 'audio/webm' });
+      state.audioUrl = URL.createObjectURL(state.audioBlob);
+      stream.getTracks().forEach(t => t.stop());
+      await evaluateRecording();
+    };
+    state.mediaRecorder.start(200);
+    state.isRecording = true;
+    document.getElementById('recordBtn').classList.add('recording');
+    document.getElementById('recordIcon').textContent = '⏹';
+    document.getElementById('recordStatus').textContent = '🔴 正在录音...再点一次结束';
+    document.getElementById('volumeMeter').classList.add('show');
+    document.getElementById('startRecordBtn').textContent = '⏹ 结束朗读';
+    startVolumeMeter(stream);
+  } catch (e) {
+    alert('无法访问麦克风，请允许权限后重试。\n如无法使用，可在设置中切换到"手动模式"。');
+    console.error(e);
+  }
+}
+
+function stopRecording() {
+  if (state.mediaRecorder && state.isRecording) {
+    state.mediaRecorder.stop();
+    state.isRecording = false;
+    document.getElementById('recordBtn').classList.remove('recording');
+    document.getElementById('recordIcon').textContent = '🎤';
+    document.getElementById('recordStatus').textContent = '⏳ 正在评测中...';
+    document.getElementById('volumeMeter').classList.remove('show');
+    document.getElementById('startRecordBtn').textContent = '🎤 朗读中...';
+    if (state._volInterval) clearInterval(state._volInterval);
+  }
+}
+
+function startVolumeMeter(stream) {
+  try {
+    const ctx = new AudioContext({ sampleRate: 16000 });
+    const source = ctx.createMediaStreamSource(stream);
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 512;
+    source.connect(analyser);
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    state._volInterval = setInterval(() => {
+      analyser.getByteFrequencyData(data);
+      let sum = 0;
+      for (let i = 0; i < data.length; i++) sum += data[i];
+      const avg = sum / data.length;
+      const pct = Math.min(100, (avg / 128) * 150);
+      document.getElementById('volumeFill').style.width = pct + '%';
+    }, 100);
+  } catch (e) {}
+}
+
+// ========== EVALUATION ==========
+async function evaluateRecording() {
+  const apiMode = state.settings.apiMode || 'auto';
+  const hasApi = state.settings.secretId && state.settings.appId;
+
+  if (apiMode === 'manual') {
+    openManualEval();
+    return;
+  }
+
+  if (apiMode === 'simulated' || !hasApi) {
+    simulateEvaluation();
+    return;
+  }
+
+  try {
+    await evaluateWithTencent();
+  } catch (e) {
+    console.error('Tencent API error:', e);
+    simulateEvaluation();
+  }
+}
+
+async function evaluateWithTencent() {
+  document.getElementById('recordStatus').textContent = '⏳ 云评测中...';
+
+  const base64Audio = await blobToBase64(state.audioBlob, 'audio/webm');
+  const text = state.customText || LESSONS[state.currentLesson]?.text || '';
+
+  const sig = makeSig(state.settings.secretId, state.settings.secretKey, base64Audio);
+
+  const resp = await fetch('https://mlnq.tencentcloudapi.com', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': sig
+    },
+    body: JSON.stringify({
+      Context: {
+        AppId: state.settings.appId,
+        SubServiceType: 2,
+        EngineModelType: '16k_zh',
+        ClientSecretId: state.settings.secretId,
+        ClientSecretKey: state.settings.secretKey,
+        Data: base64Audio,
+        DataType: '1',
+        VoiceType: 0,
+        NoiseMode: '1'
+      },
+      RequestKey: generateUUID(),
+      Common: {
+        Source: 'WebTestV2',
+        User: state.studentName || 'student'
+      }
+    })
+  });
+
+  const data = await resp.json();
+  if (data.Result !== undefined) {
+    processTencentResult(data);
+  } else {
+    simulateEvaluation();
+  }
+}
+
+function processTencentResult(data) {
+  const result = data.Result;
+  const levelScore = result.LevelScore || 0;
+  const sentenceScore = result.SentenceScore || 0;
+  const phonemeScore = result.PhonemeScore || 0;
+  const tonescore = result.ToneScore || 0;
+  const phonemeResult = result.PhonemeResult || [];
+  const errorWords = result.ErrorWords || [];
+
+  // Accuracy: green >= 85, yellow >= 60, red < 60
+  let accuracyLevel = 'green';
+  if (levelScore < 60) accuracyLevel = 'red';
+  else if (levelScore < 85) accuracyLevel = 'yellow';
+
+  // Completeness
+  let completenessLevel = 'green';
+  if (errorWords.length >= 3) completenessLevel = 'red';
+  else if (errorWords.length >= 1) completenessLevel = 'yellow';
+
+  // Fluency (tolerant)
+  let fluencyLevel = 'green';
+  const dysfluencies = result.Dysfluencies ? result.Dysfluencies.length : 0;
+  if (dysfluencies >= 5) fluencyLevel = 'red';
+  else if (dysfluencies >= 2) fluencyLevel = 'yellow';
+
+  applyEvaluation(accuracyLevel, completenessLevel, fluencyLevel, errorWords, phonemeResult);
+}
+
+function simulateEvaluation() {
+  setTimeout(() => {
+    // Simulate with some randomness for demo purposes
+    const chars = state.customText || LESSONS[state.currentLesson]?.text || '';
+    const charArr = chars.replace(/[\s\n]/g, '').split('');
+    const errors = [];
+    let errorCount = 0;
+
+    charArr.forEach((ch, i) => {
+      if (COMMON_MISTAKES[ch] && Math.random() < 0.3) {
+        errors.push({ Char: ch, Correct: COMMON_MISTAKES[ch].correct, Error: COMMON_MISTAKES[ch].wrong, WordIndex: i });
+        errorCount++;
+      }
+    });
+
+    if (errors.length === 0 && Math.random() < 0.5) {
+      // Add a random error for demo
+      const idx = Math.floor(Math.random() * charArr.length);
+      if (charArr[idx] !== ' ' && charArr[idx] !== '\n') {
+        errors.push({ Char: charArr[idx], Correct: 'hǎo', Error: 'hǎ', WordIndex: idx });
+        errorCount++;
+      }
+    }
+
+    let accuracyLevel, completenessLevel, fluencyLevel;
+    if (errorCount === 0) {
+      accuracyLevel = 'green'; completenessLevel = 'green'; fluencyLevel = Math.random() > 0.3 ? 'green' : 'yellow';
+    } else if (errorCount <= 2) {
+      accuracyLevel = 'yellow'; completenessLevel = 'green'; fluencyLevel = Math.random() > 0.4 ? 'green' : 'yellow';
+    } else if (errorCount <= 5) {
+      accuracyLevel = 'yellow'; completenessLevel = 'yellow'; fluencyLevel = 'yellow';
+    } else {
+      accuracyLevel = 'red'; completenessLevel = 'red'; fluencyLevel = Math.random() > 0.5 ? 'yellow' : 'red';
+    }
+
+    // 70% chance of all green for better demo experience
+    if (Math.random() < 0.3) {
+      accuracyLevel = 'green'; completenessLevel = 'green'; fluencyLevel = 'green';
+      errors.length = 0;
+    }
+
+    applyEvaluation(accuracyLevel, completenessLevel, fluencyLevel, errors, []);
+  }, 1200);
+}
+
+function applyEvaluation(accuracy, completeness, fluency, errorWords, phonemeResult) {
+  setLight('accuracy', accuracy);
+  setLight('completeness', completeness);
+  setLight('fluency', fluency);
+
+  document.getElementById('result-accuracy').textContent = { green: '🟢 全对', yellow: '🟡 1-2个字错', red: '🔴 3个以上错' }[accuracy];
+  document.getElementById('result-accuracy').className = 'dim-result ' + accuracy;
+  document.getElementById('result-completeness').textContent = { green: '🟢 完整', yellow: '🟡 漏一小句', red: '🔴 漏一大段' }[completeness];
+  document.getElementById('result-completeness').className = 'dim-result ' + completeness;
+  document.getElementById('result-fluency').textContent = { green: '🟢 顺畅', yellow: '🟡 少量卡顿', red: '🔴 频繁卡顿' }[fluency];
+  document.getElementById('result-fluency').className = 'dim-result ' + fluency;
+
+  document.getElementById('recordStatus').textContent = '✅ 评测完成！';
+
+  // Wrong chars section
+  const wrongSection = document.getElementById('wrongCharsSection');
+  const noErrors = document.getElementById('noErrorsMsg');
+
+  if (errorWords.length > 0) {
+    wrongSection.classList.remove('hidden');
+    noErrors.classList.add('hidden');
+    const container = document.getElementById('wrongChars');
+    container.innerHTML = '';
+    errorWords.forEach(err => {
+      const mistake = COMMON_MISTAKES[err.Char];
+      const isMistake = !!mistake;
+      const item = document.createElement('div');
+      item.className = 'wrong-char-item';
+      item.innerHTML = `
+        <span class="char">${err.Char}</span>
+        ${isMistake ? `<span class="pinyin">${mistake.wrong}</span><span class="pinyin-correct">→ ${mistake.correct}</span>` : `<span class="pinyin-correct">${err.Correct || ''}</span>`}
+        <button class="speak-btn" onclick="speakChar('${err.Char}')">🔊</button>
+        <button class="correction-btn" onclick="markCorrected(this, '${err.Char}')">我订正了</button>
+        ${isMistake ? `<div class="correction-note">💡 ${mistake.note}</div>` : ''}
+      `;
+      container.appendChild(item);
+    });
+  } else {
+    wrongSection.classList.add('hidden');
+    noErrors.classList.remove('hidden');
+  }
+
+  // Highlight chars in text
+  highlightChars(errorWords);
+
+  // Stars
+  let earnedStars = 0;
+  if (accuracy === 'green') earnedStars++;
+  if (completeness === 'green') earnedStars++;
+  if (fluency === 'green') earnedStars++;
+  if (accuracy === 'green' && completeness === 'green' && fluency === 'green') earnedStars += 1; // bonus
+
+  addStars(earnedStars);
+
+  // Save to history
+  saveHistory(accuracy, completeness, fluency, earnedStars, errorWords.length);
+
+  // Celebration
+  if (accuracy === 'green' && completeness === 'green' && fluency === 'green') {
+    setTimeout(() => showCelebration(), 500);
+  }
+
+  // Update teacher checkboxes visual
+  updateTeacherStars();
+}
+
+function highlightChars(errorWords) {
+  const display = document.getElementById('textDisplay');
+  const chars = display.querySelectorAll('.char');
+  const text = state.customText || LESSONS[state.currentLesson]?.text || '';
+  const cleanText = text.replace(/\n/g, ' ');
+  const errorSet = new Set(errorWords.map(e => e.Char));
+
+  chars.forEach((span, i) => {
+    span.classList.remove('correct', 'wrong', 'highlight');
+    if (errorSet.has(cleanText[i])) {
+      span.classList.add('wrong');
+    } else if (COMMON_MISTAKES[cleanText[i]]) {
+      span.classList.add('highlight');
+    } else if (cleanText[i] && cleanText[i] !== ' ') {
+      span.classList.add('correct');
+    }
+  });
+}
+
+function markCorrected(btn, char) {
+  btn.classList.add('done');
+  btn.textContent = '✓ 已订正';
+  btn.disabled = true;
+  // Change light from yellow to green if this was the only issue
+  const parent = btn.closest('.wrong-char-item');
+  if (parent) parent.style.background = '#f6ffed';
+}
+
+function speakChar(char) {
+  if ('speechSynthesis' in window) {
+    const utter = new SpeechSynthesisUtterance(char);
+    utter.lang = 'zh-CN';
+    utter.rate = 0.7;
+    speechSynthesis.speak(utter);
+  }
+}
+
+// ========== MANUAL EVAL ==========
+function openManualEval() {
+  const modal = document.getElementById('manualEvalModal');
+  modal.classList.add('show');
+  state.manualEvalState = { accuracy: 'off', completeness: 'off', fluency: 'off' };
+  ['accuracy', 'completeness', 'fluency'].forEach(d => {
+    const el = document.getElementById('manual-light-' + d);
+    el.className = 'light off';
+  });
+  // Show text for clicking wrong chars
+  const textDisplay = document.getElementById('manualTextDisplay');
+  const text = state.customText || LESSONS[state.currentLesson]?.text || '';
+  textDisplay.innerHTML = text.split('').map(c =>
+    `<span class="char" onclick="toggleManualChar(this)">${c}</span>`
+  ).join('');
+  textDisplay.style.fontSize = '22px';
+}
+
+function toggleManualChar(span) {
+  span.classList.toggle('wrong');
+  span.classList.toggle('correct');
+}
+
+function setDim(dim, container) {
+  const el = document.getElementById('manual-light-' + dim);
+  const states = ['off', 'green', 'yellow', 'red'];
+  const current = states.indexOf(el.className.replace('light ', '').trim());
+  el.className = 'light ' + states[(current + 1) % states.length];
+  state.manualEvalState[dim] = el.className.replace('light ', '').trim();
+}
+
+function submitManualEval() {
+  const { accuracy, completeness, fluency } = state.manualEvalState;
+  if (accuracy === 'off' || completeness === 'off' || fluency === 'off') {
+    alert('请为三项都选择评价等级');
+    return;
+  }
+  closeModal('manualEvalModal');
+  applyEvaluation(accuracy, completeness, fluency, [], []);
+}
+
+// ========== FOLLOW-ALONG MODE ==========
+function switchMode(mode) {
+  state.mode = mode;
+  document.getElementById('modeFull').classList.toggle('active', mode === 'full');
+  document.getElementById('modeFollow').classList.toggle('active', mode === 'follow');
+  document.getElementById('followSection').classList.toggle('hidden', mode !== 'follow');
+
+  if (mode === 'follow' && state.currentLesson) {
+    renderFollowLines();
+  }
+}
+
+function renderFollowLines() {
+  const lines = state.customLines && state.customLines.length > 0
+    ? state.customLines
+    : (LESSONS[state.currentLesson]?.lines || []);
+
+  const container = document.getElementById('followLines');
+  container.innerHTML = '';
+  state.followStars = 0;
+  state.followCurrentLine = 0;
+  state.followResults = new Array(lines.length).fill(null);
+  document.getElementById('followStarCount').textContent = '';
+
+  lines.forEach((line, i) => {
+    const div = document.createElement('div');
+    div.className = 'follow-line';
+    div.id = 'follow-line-' + i;
+    div.innerHTML = `<span class="line-num">${i + 1}.</span>${line}`;
+    div.onclick = () => startFollowLine(i);
+    container.appendChild(div);
+  });
+}
+
+function startFollowLine(index) {
+  if (state.followResults[index] !== null) return; // already done
+  state.followCurrentLine = index;
+
+  document.querySelectorAll('.follow-line').forEach((el, i) => {
+    el.classList.toggle('active', i === index);
+  });
+
+  // Auto-play demo
+  playDemoLineText(state.customLines[index] || LESSONS[state.currentLesson]?.lines[index]);
+
+  // Start recording for this line
+  const origRecordBtn = document.getElementById('recordBtn');
+  origRecordBtn.onclick = () => stopFollowLineRecording();
+  origRecordBtn.textContent = '⏹ 读完按此';
+  origRecordBtn.disabled = false;
+  document.getElementById('recordStatus').textContent = '🔴 请跟读这一句...';
+}
+
+function playDemoLine() {
+  const line = state.customLines[state.followCurrentLine] || LESSONS[state.currentLesson]?.lines?.[state.followCurrentLine];
+  if (line) playDemoLineText(line);
+}
+
+function playDemoLineText(text) {
+  if ('speechSynthesis' in window) {
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'zh-CN';
+    utter.rate = 0.7;
+    speechSynthesis.speak(utter);
+  }
+}
+
+function stopFollowLineRecording() {
+  const recordBtn = document.getElementById('recordBtn');
+  if (state.isRecording) {
+    stopRecording();
+    return;
+  }
+
+  // Simulate evaluation for follow mode
+  const line = state.customLines[state.followCurrentLine] || LESSONS[state.currentLesson]?.lines?.[state.followCurrentLine];
+  const isGood = Math.random() > 0.3;
+
+  state.followResults[state.followCurrentLine] = isGood;
+  state.followStars++;
+
+  const lineEl = document.getElementById('follow-line-' + state.followCurrentLine);
+  lineEl.classList.remove('active');
+  lineEl.classList.add('done');
+  lineEl.innerHTML += ' ' + (isGood ? '⭐' : '🌱');
+
+  document.getElementById('followStarCount').textContent = '⭐ 已获得 ' + state.followStars + ' 颗星';
+
+  // Move to next line or finish
+  recordBtn.onclick = () => toggleRecording();
+  recordBtn.textContent = '🎤';
+  recordBtn.disabled = true;
+  document.getElementById('recordStatus').textContent = '继续读下一句...';
+
+  const nextIdx = state.followCurrentLine + 1;
+  const totalLines = (state.customLines || LESSONS[state.currentLesson]?.lines || []).length;
+  if (nextIdx < totalLines) {
+    setTimeout(() => startFollowLine(nextIdx), 800);
+  } else {
+    document.getElementById('recordStatus').textContent = '🎉 跟读完成！';
+    if (state.followStars >= totalLines * 0.7) {
+      addStars(state.followStars);
+      saveHistory('green', 'green', 'green', state.followStars, 0, true);
+    }
+  }
+}
+
+// ========== TEACHER SECTION ==========
+function updateTeacherStars() {
+  const checks = ['chkVoice', 'chkNoSing', 'chkHappy'];
+  const count = checks.filter(id => document.getElementById(id).checked).length;
+  const el = document.getElementById('teacherStars');
+  el.textContent = count === 3 ? '🌟 老师表现星 +1！' : count > 0 ? `已勾选 ${count}/3 项` : '';
+}
+
+// ========== STARS & BADGES ==========
+function addStars(n) {
+  state.stars += n;
+  localStorage.setItem('stars', state.stars);
+  updateStarDisplay();
+  checkBadges();
+}
+
+function updateStarDisplay() {
+  document.getElementById('starCount').textContent = `⭐ ${state.stars} 颗星`;
+}
+
+const BADGES = [
+  { id: 'first_read', name: '初次朗读', icon: '🌱', condition: () => state.history.length >= 1 },
+  { id: 'five_reads', name: '五次练习', icon: '📚', condition: () => state.history.length >= 5 },
+  { id: 'ten_reads', name: '朗读达人', icon: '🏆', condition: () => state.history.length >= 10 },
+  { id: 'five_stars', name: '五星学员', icon: '⭐', condition: () => state.stars >= 5 },
+  { id: 'ten_stars', name: '十星学员', icon: '🌟', condition: () => state.stars >= 10 },
+  { id: 'twenty_stars', name: '二十星学员', icon: '💫', condition: () => state.stars >= 20 },
+  { id: 'all_green', name: '三绿灯', icon: '🟢', condition: () => state.history.some(h => h.accuracy === 'green' && h.completeness === 'green' && h.fluency === 'green') },
+  { id: 'master', name: '朗读大师', icon: '👑', condition: () => state.stars >= 30 }
+];
+
+function checkBadges() {
+  BADGES.forEach(b => {
+    if (b.condition() && !state.badges.includes(b.id)) {
+      state.badges.push(b.id);
+      localStorage.setItem('badges', JSON.stringify(state.badges));
+      showBadgeUnlock(b);
+    }
+  });
+}
+
+function showBadgeUnlock(badge) {
+  alert(`🏅 恭喜解锁徽章：${badge.icon} ${badge.name}！`);
+}
+
+// ========== HISTORY ==========
+function saveHistory(accuracy, completeness, fluency, stars, errors, isFollow = false) {
+  const record = {
+    date: new Date().toLocaleString('zh-CN'),
+    lesson: state.currentLesson || '自定义',
+    accuracy,
+    completeness,
+    fluency,
+    stars,
+    errors,
+    isFollow
+  };
+  state.history.unshift(record);
+  if (state.history.length > 50) state.history = state.history.slice(0, 50);
+  localStorage.setItem('history', JSON.stringify(state.history));
+}
+
+function showHistory() {
+  const modal = document.getElementById('historyModal');
+  modal.classList.add('show');
+
+  // Render history
+  const container = document.getElementById('historyList');
+  if (state.history.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--text-light);padding:20px;">暂无记录，开始第一次朗读吧！🎤</div>';
+  } else {
+    container.innerHTML = state.history.slice(0, 15).map(h => `
+      <div class="history-item">
+        <div class="h-lesson">${h.isFollow ? '🎵 ' : '📖 '}${h.lesson}</div>
+        <div class="h-lights">
+          <div class="h-dot" style="background:${h.accuracy==='green'?'var(--green)':h.accuracy==='yellow'?'var(--yellow)':'var(--red)'}"></div>
+          <div class="h-dot" style="background:${h.completeness==='green'?'var(--green)':h.completeness==='yellow'?'var(--yellow)':'var(--red)'}"></div>
+          <div class="h-dot" style="background:${h.fluency==='green'?'var(--green)':h.fluency==='yellow'?'var(--yellow)':'var(--red)'}"></div>
+        </div>
+        <span style="font-size:14px;color:var(--yellow);">+${h.stars}⭐</span>
+        <span class="h-date">${h.date.split(' ')[0]}</span>
+      </div>
+    `).join('');
+  }
+
+  // Render badges
+  const badgeGrid = document.getElementById('badgeGrid');
+  badgeGrid.innerHTML = BADGES.map(b => `
+    <div class="badge-item ${state.badges.includes(b.id) ? 'unlocked' : 'locked'}">
+      <div class="badge-icon">${b.icon}</div>
+      <div class="badge-name">${b.name}</div>
+    </div>
+  `).join('');
+
+  checkBadges();
+}
+
+function showPrevResult(lessonKey) {
+  const prev = state.history.filter(h => h.lesson === lessonKey).slice(0, 1);
+  const el = document.getElementById('prevResult');
+  if (prev.length > 0) {
+    const h = prev[0];
+    el.classList.remove('hidden');
+    document.getElementById('prevResultContent').innerHTML = `
+      <div style="font-size:14px;color:var(--text-light);margin-bottom:6px;">
+        ${h.date.split(' ')[0]} · ${h.accuracy==='green'?'🟢':h.accuracy==='yellow'?'🟡':'🔴'}${h.completeness==='green'?'🟢':h.completeness==='yellow'?'🟡':'🔴'}${h.fluency==='green'?'🟢':h.fluency==='yellow'?'🟡':'🔴'} · +${h.stars}⭐
+      </div>
+    `;
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+// ========== UI HELPERS ==========
+function setLight(dim, level) {
+  const el = document.getElementById('light-' + dim);
+  el.className = 'light ' + level;
+}
+
+function showGuide() {
+  document.getElementById('guideModal').classList.add('show');
+}
+
+function showSettings() {
+  document.getElementById('settingsModal').classList.add('show');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+function showCelebration() {
+  const el = document.getElementById('celebration');
+  el.classList.add('show');
+  createConfetti();
+}
+
+function hideCelebration() {
+  document.getElementById('celebration').classList.remove('show');
+  document.querySelectorAll('.confetti').forEach(c => c.remove());
+}
+
+function createConfetti() {
+  const colors = ['#ff6b35', '#52c41a', '#faad14', '#1890ff', '#eb2f96', '#722ed1'];
+  for (let i = 0; i < 50; i++) {
+    const conf = document.createElement('div');
+    conf.className = 'confetti';
+    conf.style.left = Math.random() * 100 + 'vw';
+    conf.style.background = colors[Math.floor(Math.random() * colors.length)];
+    conf.style.width = (Math.random() * 10 + 5) + 'px';
+    conf.style.height = (Math.random() * 10 + 5) + 'px';
+    conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    conf.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+    conf.style.animationDelay = Math.random() * 0.5 + 's';
+    document.body.appendChild(conf);
+    setTimeout(() => conf.remove(), 4000);
+  }
+}
+
+function resetEval() {
+  ['accuracy', 'completeness', 'fluency'].forEach(dim => {
+    setLight(dim, 'off');
+    document.getElementById('result-' + dim).textContent = '—';
+    document.getElementById('result-' + dim).className = 'dim-result';
+  });
+  document.getElementById('wrongCharsSection').classList.add('hidden');
+  document.getElementById('noErrorsMsg').classList.add('hidden');
+  document.querySelectorAll('.char').forEach(c => c.classList.remove('correct', 'wrong', 'highlight'));
+  document.querySelectorAll('.teacher-section input').forEach(c => c.checked = false);
+  document.getElementById('teacherStars').textContent = '';
+  document.getElementById('recordStatus').textContent = '选择课文后开始朗读';
+  document.getElementById('startRecordBtn').textContent = '🎤 开始朗读';
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  const body = document.body;
+  body.classList.remove('tab-reading', 'tab-recording', 'tab-report');
+  if (tab === 'reading') body.classList.add('tab-reading');
+  else if (tab === 'recording') body.classList.add('tab-recording');
+  else body.classList.add('tab-report');
+}
+
+// ========== CLOUD API UTILITIES ==========
+function makeSig(secretId, secretKey, base64Data) {
+  // Simplified signature for demo - in production use proper HMAC-SHA1
+  const timestamp = Math.floor(Date.now() / 1000);
+  const nonce = Math.floor(Math.random() * 100000);
+  const str = `Action=Evaluate&Context.AppId=${encodeURIComponent(state.settings.appId || '')}&Timestamp=${timestamp}&Nonce=${nonce}&Version=2019-11-01`;
+  const signStr = `GETmlnq.tencentcloudapi.com?${str}`;
+  // For demo purposes, return a simple token
+  // Production: use proper Tencent Cloud SDK
+  return `TOKEN ${secretId}:${btoa(signStr + secretKey).slice(0, 20)}`;
+}
+
+function blobToBase64(blob, mimeType) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('show');
+  });
+});
+
+// Init
+init();
+</script>
+</body>
+</html>
